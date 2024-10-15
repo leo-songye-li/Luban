@@ -5,46 +5,46 @@ on:
 
 jobs:
 
-    build-windows:
-        name: Build Windows Packages
+    # build-windows:
+    #     name: Build Windows Packages
 
-        runs-on: windows-2022
+    #     runs-on: windows-2022
 
-        steps:
-            - name: Prepare VC++ Runtime
-              run: choco install -y vcredist2017
+    #     steps:
+    #         - name: Prepare VC++ Runtime
+    #           run: choco install -y vcredist2017
 
-            - name: Checkout Code
-              uses: actions/checkout@v4
-              with:
-                  token: ${{ secrets.SACP_TOKEN }}
-                  submodules: 'true'
+    #         - name: Checkout Code
+    #           uses: actions/checkout@v4
+    #           with:
+    #               token: ${{ secrets.SACP_TOKEN }}
+    #               submodules: 'true'
 
-            - name: Checkout submodules
-              run: git submodule update --init --recursive
+    #         - name: Checkout submodules
+    #           run: git submodule update --init --recursive
 
-            - name: Use Node.js 16
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
+    #         - name: Use Node.js 16
+    #           uses: actions/setup-node@v3
+    #           with:
+    #               node-version: 16
 
-            - run: npm install -g npm@^9
-            - run: npm install
+    #         - run: npm install -g npm@^9
+    #         - run: npm install
 
-            - run: npm run build
+    #         - run: npm run build
 
-            # ----------------------------------------------------------------
-            # Build Windows x64
-            # ----------------------------------------------------------------
-            - name: Build Windows x64 Binaries
-              run: npm run build:win-x64
+    #         # ----------------------------------------------------------------
+    #         # Build Windows x64
+    #         # ----------------------------------------------------------------
+    #         - name: Build Windows x64 Binaries
+    #           run: npm run build:win-x64
 
-            - name: Release on Github
-              uses: softprops/action-gh-release@v1
-              with:
-                  files: |
-                      ./output/*.exe
-                      ./output/latest.yml
+    #         - name: Release on Github
+    #           uses: softprops/action-gh-release@v1
+    #           with:
+    #               files: |
+    #                   ./output/*.exe
+    #                   ./output/latest.yml
 
     build-macos:
         name: Build macOS Packages
@@ -109,68 +109,68 @@ jobs:
                   ossutil cp -f ./output/ ${{secrets.OSS_UPDATE_PATH}}/ --include "*.dmg" -r
                   ossutil cp -f ./output/ ${{secrets.OSS_UPDATE_PATH}}/ --include "*.zip" -r
 
-    build-linux:
-        name: Build Linux Packages
+    # build-linux:
+    #     name: Build Linux Packages
 
-        # Ubuntu 20.04: ubuntu-latest or ubuntu-20.04
-        runs-on: ubuntu-latest
+    #     # Ubuntu 20.04: ubuntu-latest or ubuntu-20.04
+    #     runs-on: ubuntu-latest
 
-        steps:
-            - name: Checkout Code
-              uses: actions/checkout@v4
-              with:
-                  token: ${{ secrets.SACP_TOKEN }}
-                  submodules: 'true'
+    #     steps:
+    #         - name: Checkout Code
+    #           uses: actions/checkout@v4
+    #           with:
+    #               token: ${{ secrets.SACP_TOKEN }}
+    #               submodules: 'true'
 
-            - name: Checkout submodules
-              run: git submodule update --init --recursive
+    #         - name: Checkout submodules
+    #           run: git submodule update --init --recursive
 
-            - name: Use Node.js 16
-              uses: actions/setup-node@v3
-              with:
-                  node-version: 16
+    #         - name: Use Node.js 16
+    #           uses: actions/setup-node@v3
+    #           with:
+    #               node-version: 16
 
-            - run: npm install -g npm@^9
-            - run: npm install
+    #         - run: npm install -g npm@^9
+    #         - run: npm install
 
-            - run: npm run build
+    #         - run: npm run build
 
-            # ----------------------------------------------------------------
-            # Build Linux x64
-            # ----------------------------------------------------------------
-            - name: Build Linux x64 Binaries
-              run: npm run build:linux-x64
+    #         # ----------------------------------------------------------------
+    #         # Build Linux x64
+    #         # ----------------------------------------------------------------
+    #         - name: Build Linux x64 Binaries
+    #           run: npm run build:linux-x64
 
-            - run: |
-                  PRODUCT_NAME="Snapmaker Luban"
-                  PACKAGE_NAME="snapmaker-luban"
-                  PACKAGE_VERSION=`node -e "console.log(require('./src/package.json').version)"`
-                  RELEASE=${PACKAGE_NAME}-${PACKAGE_VERSION}
+    #         - run: |
+    #               PRODUCT_NAME="Snapmaker Luban"
+    #               PACKAGE_NAME="snapmaker-luban"
+    #               PACKAGE_VERSION=`node -e "console.log(require('./src/package.json').version)"`
+    #               RELEASE=${PACKAGE_NAME}-${PACKAGE_VERSION}
 
-                  ln -sf ./output/linux-unpacked "${RELEASE}-linux-x64"
-                  tar zcfh "./output/${RELEASE}-linux-x64.tar.gz" "${RELEASE}-linux-x64"
-                  rm -f "${RELEASE}-linux-x64"
+    #               ln -sf ./output/linux-unpacked "${RELEASE}-linux-x64"
+    #               tar zcfh "./output/${RELEASE}-linux-x64.tar.gz" "${RELEASE}-linux-x64"
+    #               rm -f "${RELEASE}-linux-x64"
 
-            - name: Release on Github
-              uses: softprops/action-gh-release@v1
-              with:
-                  files: |
-                      ./output/*.deb
-                      ./output/*.rpm
-                      ./output/*.tar.gz
+    #         - name: Release on Github
+    #           uses: softprops/action-gh-release@v1
+    #           with:
+    #               files: |
+    #                   ./output/*.deb
+    #                   ./output/*.rpm
+    #                   ./output/*.tar.gz
 
-            - name: Init OSS
-              if: github.repository == 'Snapmaker/Luban'
-              uses: yizhoumo/setup-ossutil@v1
-              with:
-                  ossutil-version: '1.7.0'
-                  endpoint: ${{ secrets.OSS_ENDPOINT }}
-                  access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
-                  access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+    #         - name: Init OSS
+    #           if: github.repository == 'Snapmaker/Luban'
+    #           uses: yizhoumo/setup-ossutil@v1
+    #           with:
+    #               ossutil-version: '1.7.0'
+    #               endpoint: ${{ secrets.OSS_ENDPOINT }}
+    #               access-key-id: ${{ secrets.OSS_ACCESS_KEY_ID }}
+    #               access-key-secret: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
 
-            - name: Upload Release linux Installer To OSS
-              if: github.repository == 'Snapmaker/Luban'
-              run: |
-                  ossutil cp -f ./output/ ${{secrets.OSS_UPDATE_PATH}}/ --include "*.deb" -r
-                  ossutil cp -f ./output/ ${{secrets.OSS_UPDATE_PATH}}/ --include "*.rpm" -r
-                  ossutil cp -f ./output/ ${{secrets.OSS_UPDATE_PATH}}/ --include "*.tar.gz" -r
+    #         - name: Upload Release linux Installer To OSS
+    #           if: github.repository == 'Snapmaker/Luban'
+    #           run: |
+    #               ossutil cp -f ./output/ ${{secrets.OSS_UPDATE_PATH}}/ --include "*.deb" -r
+    #               ossutil cp -f ./output/ ${{secrets.OSS_UPDATE_PATH}}/ --include "*.rpm" -r
+    #               ossutil cp -f ./output/ ${{secrets.OSS_UPDATE_PATH}}/ --include "*.tar.gz" -r
