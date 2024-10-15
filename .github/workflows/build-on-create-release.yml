@@ -2,6 +2,10 @@ name: Build on Release created
 
 on:
     workflow_dispatch:
+        inputs:
+          jobId:
+            description: "云切片任务Id"
+            required: false
 
 jobs:
 
