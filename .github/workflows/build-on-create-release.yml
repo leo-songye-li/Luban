@@ -32,9 +32,8 @@ jobs:
                   node-version: 16
 
             - run: npm install -g npm@^9
-            - run: npm fund
             - run: npm install
-
+            - run: npm list
 
             - run: npm run build
 
