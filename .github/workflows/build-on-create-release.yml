@@ -50,11 +50,9 @@ jobs:
             #           ./output/*.exe
             #           ./output/latest.yml
             - name: Collect Artifact
-              uses: actions/upload-artifact@v4
+              uses: actions/upload-artifact@v4.4.3
               with:
-                  files: |
-                      ./output/*.exe
-                      ./output/latest.yml
+                  path: ./output/*.exe
 
     # build-macos:
     #     name: Build macOS Packages
