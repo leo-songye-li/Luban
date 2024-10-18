@@ -51,7 +51,7 @@ jobs:
               with:
                 upload_url: https://uploads.github.com/repos/Snapmaker/Luban/releases/180614211/assets{?name,label}
                 release_id: 180614211
-                asset_path: ./output/*.exe
+                asset_path: ./output/ ${{ env.EXE_FILE }}
                 asset_name: ${{ env.EXE_FILE }}
                 asset_content_type: application/octet-stream
                 max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
@@ -119,7 +119,7 @@ jobs:
               with:
                 upload_url: https://uploads.github.com/repos/Snapmaker/Luban/releases/180614211/assets{?name,label}
                 release_id: 180614211
-                asset_path: ./output/*.dmg
+                asset_path: ./output/${{ env.DMG_FILE }}
                 asset_name: ${{ env.DMG_FILE }}
                 asset_content_type: application/octet-stream
                 max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
@@ -167,26 +167,48 @@ jobs:
                   tar zcfh "./output/${RELEASE}-linux-x64.tar.gz" "${RELEASE}-linux-x64"
                   rm -f "${RELEASE}-linux-x64"
 
-            - name: Release on Github
-              uses: softprops/action-gh-release@v1
-              with:
-                  files: |
-                      ./output/*.deb
-                      ./output/*.rpm
-                      ./output/*.tar.gz
-
-
-            - name: Upload artifacts macOS
+                  
+                  FILE=$(find ./output -name '*.deb')
+                  echo "DEB_FILE=$FILE" >> $GITHUB_ENV
+                  FILE=$(find ./output -name '*.rpm')
+                  echo "RPM_FILE=$FILE" >> $GITHUB_ENV
+                  FILE=$(find ./output -name '*.tar.gz')
+                  echo "TAR_FILE=$FILE" >> $GITHUB_ENV
+                  
+            - name: Upload artifacts Linux
               uses: actions/upload-artifact@v4.4.3
               with:
-                  path: ./output/*.dmg
+                  path: |
+                    ./output/*.deb
+                    ./output/*.rpm
+                    ./output/*.tar.gz
       
-            - name: Deploy Windows x64 release
+            - name: Deploy Linux deb release
               uses: WebFreak001/deploy-nightly@v3.2.0
               with:
                 upload_url: https://uploads.github.com/repos/Snapmaker/Luban/releases/180614211/assets{?name,label}
                 release_id: 180614211
-                asset_path: ./output/*.dmg
-                asset_name: ${{ env.DMG_FILE }}
+                asset_path: ./output/${{ env.DEB_FILE }}
+                asset_name: ${{ env.DEB_FILE }}
+                asset_content_type: application/octet-stream
+                max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+           
+            - name: Deploy Linux rpm release
+              uses: WebFreak001/deploy-nightly@v3.2.0
+              with:
+                upload_url: https://uploads.github.com/repos/Snapmaker/Luban/releases/180614211/assets{?name,label}
+                release_id: 180614211
+                asset_path: ./output/${{ env.RPM_FILE }}
+                asset_name: ${{ env.RPM_FILE }}
+                asset_content_type: application/octet-stream
+                max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+            
+            - name: Deploy Linux tar release
+              uses: WebFreak001/deploy-nightly@v3.2.0
+              with:
+                upload_url: https://uploads.github.com/repos/Snapmaker/Luban/releases/180614211/assets{?name,label}
+                release_id: 180614211
+                asset_path: ./output/${{ env.TAR_FILE }}
+                asset_name: ${{ env.TAR_FILE }}
                 asset_content_type: application/octet-stream
                 max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
