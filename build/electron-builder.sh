@@ -29,5 +29,5 @@ popd
 echo "Rebuild native modules using electron ${electron_version}"
 
 npm run electron-rebuild -- --version=${electron_version:1} --module-dir=dist/Luban --which-module=font-scanner,serialport
-
+export DEBUG=electron-notarize electron-builder
 cross-env USE_HARD_LINKS=false npm run electron-builder -- "$@"
