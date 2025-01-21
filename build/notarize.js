@@ -15,15 +15,18 @@ module.exports = async function notarizing(context) {
     console.log('Notarizing application...');
 
     const appName = context.packager.appInfo.productFilename;
-
-    const teamId = process.env.TEAMID;;
+    const teamId = process.env.TEAMID;
     const appleId = process.env.APPLEID;
     const appleIdPassword = process.env.APPLEIDPASS;
-
-    await notarize({
-        appPath: `${appOutDir}/${appName}.app`,
-        appleId,
-        appleIdPassword,
-        teamId,
-    });
+    try {
+        await notarize({
+            appPath: `${appOutDir}/${appName}.app`,
+            appleId,
+            appleIdPassword,
+            teamId,
+        });
+        console.log('Notarization successful!');
+    } catch (error) {
+        console.error('Error during notarization:', error);
+    }
 };
